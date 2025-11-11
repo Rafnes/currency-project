@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import me.dineka.currency_project.dto.CurrencyRequestDTO;
 import me.dineka.currency_project.dto.CurrencyResponseDTO;
 import me.dineka.currency_project.model.Currency;
+import me.dineka.currency_project.service.ActualCurrencyRateUpdateService;
 import me.dineka.currency_project.service.CurrencyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,11 @@ import java.util.UUID;
 @RequestMapping("/currency")
 public class CurrencyController {
     private final CurrencyService currencyService;
+    private final ActualCurrencyRateUpdateService actualCurrencyRateUpdateService;
 
-    public CurrencyController(CurrencyService currencyService) {
+    public CurrencyController(CurrencyService currencyService, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService) {
         this.currencyService = currencyService;
+        this.actualCurrencyRateUpdateService = actualCurrencyRateUpdateService;
     }
 
     @PostMapping("/add")
@@ -60,5 +63,16 @@ public class CurrencyController {
     public ResponseEntity<Void> deleteCurrency(@RequestParam UUID id) {
         currencyService.deleteCurrencyById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Обновить курсы валют", description = "Обновление курсов валют с сайта ЦБ")
+    @GetMapping("/getRatesFromCbr")
+    public ResponseEntity<String> getRatesFromCbr() {
+        try {
+            actualCurrencyRateUpdateService.updateRates();
+            return ResponseEntity.ok("Курсы обновлены");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка обновления курсов");
+        }
     }
 }
