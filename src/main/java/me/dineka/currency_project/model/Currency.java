@@ -21,10 +21,10 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @Column(name = "nominal")
@@ -53,6 +53,7 @@ public class Currency {
                 ", name=" + name +
                 ", code=" + code +
                 ", nominal=" + nominal +
+                ", exchangeRate=" + exchangeRate.getRate() +
                 '}';
     }
 }

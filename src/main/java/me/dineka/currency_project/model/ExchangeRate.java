@@ -1,5 +1,6 @@
 package me.dineka.currency_project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class ExchangeRate {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "exchangeRate")
     private Currency currency;
 
