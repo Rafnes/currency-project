@@ -21,8 +21,7 @@ public class ExchangeRate {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "currency_id")
+    @OneToOne(mappedBy = "exchangeRate")
     private Currency currency;
 
     @Column(name = "rate")

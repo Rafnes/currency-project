@@ -9,15 +9,9 @@ databaseChangeLog:
               - column:
                   name: "id"
                   type: UUID
-                constraints:
-                  primaryKey: true
-                  nullable: false
-              - column:
-                  name: "currency_id"
-                  type: UUID
                   constraints:
+                    primaryKey: true
                     nullable: false
-                    unique: true
               - column:
                   name: "rate"
                   type: DOUBLE
@@ -28,9 +22,9 @@ databaseChangeLog:
                   type: DATETIME
 
         - addForeignKeyConstraint:
-            baseTableName: "exchange_rate"
-            baseColumnNames: "currency_id"
-            referencedTableName: "currency"
+            baseTableName: "currency"
+            baseColumnNames: "exchange_rate_id"
+            referencedTableName: "exchange_rate"
             referencedColumnNames: "id"
-            constraintName: "fk_exchange_rate_currency"
+            constraintName: "fk_currency_exchange_rate"
             onDelete: "CASCADE"

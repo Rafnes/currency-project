@@ -28,3 +28,8 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
+              - column:
+                  name: "exchange_rate_id"
+                  type: UUID
+                  constraints:
+                    nullable: false

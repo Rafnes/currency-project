@@ -30,7 +30,8 @@ public class Currency {
     @Column(name = "nominal")
     private Integer nominal;
 
-    @OneToOne(mappedBy = "currency", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "exchange_rate_id")
     private ExchangeRate exchangeRate;
 
     @Override
