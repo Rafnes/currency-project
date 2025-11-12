@@ -9,19 +9,25 @@ import me.dineka.currency_project.model.Currency;
 import me.dineka.currency_project.model.ExchangeRate;
 import me.dineka.currency_project.repository.CurrencyRepository;
 import me.dineka.currency_project.validation.Validation;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class CurrencyService {
     private final CurrencyRepository currencyRepository;
+    private final ActualCurrencyRateUpdateService actualCurrencyRateUpdateService;
 
-    public CurrencyService(CurrencyRepository currencyRepository) {
+    public CurrencyService(CurrencyRepository currencyRepository, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService) {
         this.currencyRepository = currencyRepository;
+        this.actualCurrencyRateUpdateService = actualCurrencyRateUpdateService;
     }
 
     public Currency addCurrency(CurrencyRequestDTO dto) {
@@ -105,5 +111,32 @@ public class CurrencyService {
         }
         currencyRepository.deleteById(id);
         log.info("Удалена валюта с id {}", id);
+    }
+
+    @Scheduled(cron = "0 0 10 * * ?")
+    public void realDailyUpdate() {
+        try {
+            actualCurrencyRateUpdateService.updateRates();
+            log.info("Выполнено ежедневное обновление курсов валют");
+        } catch (IOException e) {
+            log.error("Не удалось выполнить ежедневное обновление курсов валют: {}", e.getMessage());
+        }
+    }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void fakeUpdate() {
+        log.info("Выполняется фейковое обновление курсов валют");
+        Random random = new Random();
+
+        List<Currency> currencies = currencyRepository.findAll();
+        for (Currency currency : currencies) {
+            ExchangeRate rate = currency.getExchangeRate();
+            double randomRate = random.nextDouble(0.1, 300.0);
+            rate.setRate(randomRate);
+            rate.setUpdatedAt(LocalDateTime.now());
+            currencyRepository.save(currency);
+            log.info("Фейковый курс: {}: {}", currency.getCode(), currency.getExchangeRate().getRate());
+
+        }
     }
 }
