@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
@@ -75,7 +74,9 @@ public class CurrencyService {
             return new CurrencyNotFoundException("Валюта с id " + id + " не найдена");
         });
 
-        if (currencyRepository.existsByNameIgnoreCaseAndCodeIgnoreCase(dto.getName(), dto.getCode()) && dto.getRate().equals(currency.getExchangeRate().getRate())) {
+        if (currencyRepository.existsByNameIgnoreCaseAndCodeIgnoreCase(dto.getName(), dto.getCode())
+                && dto.getRate().equals(currency.getExchangeRate().getRate())
+                && dto.getNominal().equals(currency.getNominal())) {
             log.error("Не удалось обновить валюту: валюта с таким названием, кодом и курсом уже существует ");
             throw new CurrencyAlreadyExistsException("Не удалось обновить валюту: валюта с таким названием, кодом и курсом уже существует");
         }
@@ -136,7 +137,6 @@ public class CurrencyService {
             rate.setUpdatedAt(LocalDateTime.now());
             currencyRepository.save(currency);
             log.info("Фейковый курс: {}: {}", currency.getCode(), currency.getExchangeRate().getRate());
-
         }
     }
 }
