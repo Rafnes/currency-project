@@ -1,12 +1,9 @@
 package me.dineka.currency_project.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.dineka.currency_project.model.Currency;
-import me.dineka.currency_project.model.ExchangeRate;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
