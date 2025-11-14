@@ -22,10 +22,12 @@ import java.util.UUID;
 @Service
 public class CurrencyService {
     private final CurrencyRepository currencyRepository;
+    private final CurrencyMapper currencyMapper;
     private final ActualCurrencyRateUpdateService actualCurrencyRateUpdateService;
 
-    public CurrencyService(CurrencyRepository currencyRepository, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService) {
+    public CurrencyService(CurrencyRepository currencyRepository, CurrencyMapper currencyMapper, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService) {
         this.currencyRepository = currencyRepository;
+        this.currencyMapper = currencyMapper;
         this.actualCurrencyRateUpdateService = actualCurrencyRateUpdateService;
     }
 
@@ -40,11 +42,15 @@ public class CurrencyService {
             log.error("Ошибка добавления валюты: ", e);
             throw e;
         }
-        if (currencyRepository.existsByNameIgnoreCaseAndCodeIgnoreCase(dto.getName(), dto.getCode())) {
-            log.error("Не удалось добавить валюту: валюта с таким названием и кодом уже существует ");
-            throw new CurrencyAlreadyExistsException("Не удалось добавить валюту: валюта с таким названием и кодом уже существует");
+        if (currencyRepository.existsByNameIgnoreCase(dto.getName())) {
+            log.error("Не удалось добавить валюту: валюта с таким названием уже существует ");
+            throw new CurrencyAlreadyExistsException("Не удалось добавить валюту: валюта с таким названием  уже существует");
         }
-        Currency currency = CurrencyMapper.toEntity(dto);
+        if (currencyRepository.existsByCodeIgnoreCase(dto.getCode())) {
+            log.error("Не удалось добавить валюту: валюта с таким кодом уже существует ");
+            throw new CurrencyAlreadyExistsException("Не удалось добавить валюту: валюта с таким кодом  уже существует");
+        }
+        Currency currency = currencyMapper.toEntity(dto);
         currencyRepository.save(currency);
         log.info("Добавлена валюта: {}", currency);
         return currency;
@@ -53,19 +59,19 @@ public class CurrencyService {
     public List<CurrencyResponseDTO> getAllCurrencies() {
         List<Currency> currencyList = currencyRepository.findAll();
         List<CurrencyResponseDTO> result = currencyList.stream()
-                .map(currency -> CurrencyMapper.toDTO(currency))
+                .map(currency -> currencyMapper.toDTO(currency))
                 .toList();
         return result;
     }
 
     public CurrencyResponseDTO getCurrencyByCode(String code) {
         Currency currency = currencyRepository.findByCodeIgnoreCase(code).orElseThrow(() -> new CurrencyNotFoundException("Валюта с кодом " + code + " не найдена"));
-        return CurrencyMapper.toDTO(currency);
+        return currencyMapper.toDTO(currency);
     }
 
     public CurrencyResponseDTO getCurrencyById(UUID id) {
         Currency currency = currencyRepository.findById(id).orElseThrow(() -> new CurrencyNotFoundException("Валюта с id " + id + " не найдена"));
-        return CurrencyMapper.toDTO(currency);
+        return currencyMapper.toDTO(currency);
     }
 
     public CurrencyResponseDTO updateCurrencyById(UUID id, CurrencyRequestDTO dto) {
@@ -102,7 +108,7 @@ public class CurrencyService {
         }
         currencyRepository.save(currency);
         log.info("Обновлена валюта: {}", currency);
-        return CurrencyMapper.toDTO(currency);
+        return currencyMapper.toDTO(currency);
     }
 
     public void deleteCurrencyById(UUID id) {

@@ -16,6 +16,9 @@ public class Validation {
     }
 
     private static void validateCurrencyName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalCurrencyNameException("Название валюты не должно быть пустым или null");
+        }
         if (!StringUtils.isAlphaSpace(name)) {
             throw new IllegalCurrencyNameException("Название валюты должно содержать только буквы и пробелы");
         }
@@ -27,8 +30,8 @@ public class Validation {
         }
     }
 
-    private static void validateCurrencyNominal(int nominal) {
-        if (nominal < 1) {
+    private static void validateCurrencyNominal(Integer nominal) {
+        if (nominal != null && nominal < 1) {
             throw new IllegalCurrencyNominalException("Номинал валюты не может быть меньше 1");
         }
     }

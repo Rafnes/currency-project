@@ -4,12 +4,14 @@ import me.dineka.currency_project.dto.CurrencyRequestDTO;
 import me.dineka.currency_project.dto.CurrencyResponseDTO;
 import me.dineka.currency_project.model.Currency;
 import me.dineka.currency_project.model.ExchangeRate;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class CurrencyMapper {
-    public static CurrencyResponseDTO toDTO(Currency currency) {
+    public CurrencyResponseDTO toDTO(Currency currency) {
         CurrencyResponseDTO response = new CurrencyResponseDTO();
         response.setName(currency.getName());
         response.setCode(currency.getCode());
@@ -21,7 +23,7 @@ public class CurrencyMapper {
         return response;
     }
 
-    public static Currency toEntity(CurrencyRequestDTO dto) {
+    public Currency toEntity(CurrencyRequestDTO dto) {
         Currency currency = new Currency();
         currency.setName(dto.getName());
         currency.setCode(dto.getCode().toUpperCase());

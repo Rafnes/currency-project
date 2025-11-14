@@ -17,19 +17,4 @@ public class TestValues {
 
     public static final double VALID_RATE_1 = 0.144;
     public static final double VALID_RATE_2 = 82.12;
-
-    public static final String INVALID_NAME_1 = "111";
-    public static final String INVALID_NAME_2 = "Валюта 200";
-    public static final String INVALID_NAME_3 = " ";
-    public static final String INVALID_NAME_4 = "$$$!";
-
-    public static final String INVALID_CODE_1 = "TRKLR";
-    public static final String INVALID_CODE_2 = "F F";
-    public static final String INVALID_CODE_3 = "F-F";
-    public static final String INVALID_CODE_4 = "SS";
-    public static final String INVALID_CODE_5 = "VAL20";
-    public static final String INVALID_CODE_6 = "va@";
-
-    public static final int INVALID_NOMINAL_TOO_LOW = -24;
-    public static final double INVALID_RATE_TOO_LOW = -77.244;
 }
