@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: "002"
+      author: "vdineka"
+      changes:
+        - createTable:
+            tableName: "exchange_rate"
+            columns:
+              - column:
+                  name: "id"
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: "rate"
+                  type: DOUBLE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "updated_at"
+                  type: DATETIME
+
+        - addForeignKeyConstraint:
+            baseTableName: "currency"
+            baseColumnNames: "exchange_rate_id"
+            referencedTableName: "exchange_rate"
+            referencedColumnNames: "id"
+            constraintName: "fk_currency_exchange_rate"
+            onDelete: "CASCADE"
