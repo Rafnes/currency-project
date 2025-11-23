@@ -3,6 +3,7 @@ package me.dineka.currency_project.service;
 import me.dineka.currency_project.dto.CurrencyRequestDTO;
 import me.dineka.currency_project.dto.CurrencyResponseDTO;
 import me.dineka.currency_project.exception.*;
+import me.dineka.currency_project.kafka.CurrencyNotificationProducer;
 import me.dineka.currency_project.mapper.CurrencyMapper;
 import me.dineka.currency_project.model.Currency;
 import me.dineka.currency_project.model.ExchangeRate;
@@ -30,6 +31,9 @@ class CurrencyServiceTest {
 
     @Mock
     private CurrencyRepository currencyRepository;
+
+    @Mock
+    private CurrencyNotificationProducer currencyNotificationProducer;
 
     @InjectMocks
     private CurrencyService currencyService;

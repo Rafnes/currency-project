@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.dineka.currency_project.dto.CurrencyRequestDTO;
 import me.dineka.currency_project.dto.CurrencyResponseDTO;
 import me.dineka.currency_project.exception.*;
+import me.dineka.currency_project.kafka.CurrencyNotificationProducer;
 import me.dineka.currency_project.mapper.CurrencyMapper;
 import me.dineka.currency_project.model.Currency;
 import me.dineka.currency_project.model.ExchangeRate;
@@ -24,11 +25,13 @@ public class CurrencyService {
     private final CurrencyRepository currencyRepository;
     private final CurrencyMapper currencyMapper;
     private final ActualCurrencyRateUpdateService actualCurrencyRateUpdateService;
+    private final CurrencyNotificationProducer notificationProducer;
 
-    public CurrencyService(CurrencyRepository currencyRepository, CurrencyMapper currencyMapper, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService) {
+    public CurrencyService(CurrencyRepository currencyRepository, CurrencyMapper currencyMapper, ActualCurrencyRateUpdateService actualCurrencyRateUpdateService, CurrencyNotificationProducer notificationProducer) {
         this.currencyRepository = currencyRepository;
         this.currencyMapper = currencyMapper;
         this.actualCurrencyRateUpdateService = actualCurrencyRateUpdateService;
+        this.notificationProducer = notificationProducer;
     }
 
     public Currency addCurrency(CurrencyRequestDTO dto) {
@@ -52,6 +55,8 @@ public class CurrencyService {
         }
         Currency currency = currencyMapper.toEntity(dto);
         currencyRepository.save(currency);
+
+        notificationProducer.sendCurrencyCreated(currency.getCode(), currency.getName());
         log.info("Добавлена валюта: {}", currency);
         return currency;
     }
